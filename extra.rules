@@ -1,0 +1,38 @@
+#!/bin/sh
+
+
+# Transparent proxy , se http://en.tldp.org/HOWTO/mini/TransparentProxy-4.html
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3128 
+#iptables -t nat -A PREROUTING  -p tcp --dport 80 -j REDIRECT --to-port 3128 
+
+
+# Squid config for transparent proxy:
+# httpd_accel_host virtual 
+# httpd_accel_port 80 
+# httpd_accel_with_proxy on 
+# httpd_accel_uses_host_header on 
+
+
+
+FW_EXTERNAL_IP=1.1.1.1             # The IP-address of the external interface of the firewall
+FW_EXTERNAL_INTERFACE=eth0         # The external interface, if using -i instead of -d.
+FW_EXTERNAL_PORT=80                # The port to be forwarded
+FW_INTERNAL_IP=192.168.0.1         # The IP-address of the internal interface of the firewall
+INTERNAL_MACHINE_IP=192.168.0.2    # The IP-address of the machine on the internal network to be forwarded to.
+INTERNAL_MACHINE_PORT=80           # The port to be forwarded to
+
+# Activate forwarding
+#echo 1 > /proc/sys/net/ipv4/ip_forward
+
+# Forward packets coming in from the outside
+#iptables -t nat -A PREROUTING  -p tcp -d $FW_EXTERNAL_IP      --dport $FW_EXTERNAL_PORT      -j DNAT   --to-destination $INTERNAL_MACHINE_IP:$INTERNAL_MACHINE_PORT
+
+# Make it work from the firewall itself
+#iptables -t nat -A OUTPUT      -p tcp -d $FW_EXTERNAL_IP      --dport $FW_EXTERNAL_PORT      -j DNAT   --to-destination $INTERNAL_MACHINE_IP:$INTERNAL_MACHINE_PORT
+
+# Make responses on the internal network go through the firewall
+#iptables -t nat -A POSTROUTING -p tcp -d $INTERNAL_MACHINE_IP --dport $INTERNAL_MACHINE_PORT -j SNAT   --to-source $FW_INTERNAL_IP
+
+# Allow forwarded packets
+#iptables        -A FORWARD     -p tcp -d $INTERNAL_MACHINE_IP --dport $INTERNAL_MACHINE_PORT -j ACCEPT -m state --state NEW,ESTABLISHED,RELATED
+

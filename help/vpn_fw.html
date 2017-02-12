@@ -1,0 +1,19 @@
+<header>VPN on Firewall</header>
+
+If the VPN gateway is a firewall, you can select <b>Yes</b> to automaticly insert
+firewall rules to open for VPN Security Assoriation ( SA ) establishment to
+and from the firewall.
+<p>
+If you select <b>No</b> you will have to ajust the firewall ruleset yourself.
+<p>
+Note that only the VPN tunnel (SA) and connection negotiation will be opened
+for. You will still have to
+create rules to define the policy for members in the VPN. Remote objects are
+now connected over the virtual IPSEC interface ( default ipsec0 ) and not
+the real interface ( eth?).
+<p>
+Modify the <b>Location</b> parameter for the object  describing where the object is
+connected. Set it to the virtual IPSEC interface ( ipsec? ) corresponding to the
+real IF the tunnel is running over.
+<p>
+Interface definitions are defined in the module configuration view.

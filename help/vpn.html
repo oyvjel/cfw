@@ -1,0 +1,46 @@
+<header>VPN tunneller</header>
+
+Cumulus firewall implementerer VPN som IPSEC kompatible tunneller mellom
+gatewayer. Maskinene  krypterer og dekrypterer data til og fra subnett bak
+brannmurene, heretter kalt krypteringsdomene.
+<P>
+Dersom subnett bak brannmuren ikke spesifiseres er maskinens eksterne
+adresse selv hele krypteringsdomenet.
+<p>
+Som standard bør man velge RSA autentisering av tunellenes endepunkter. 
+<br><b>Unntak:</B>
+<h3>PGPNet mobil PC</h3>
+Autentisering: secret ( Preshared secret )<br>
+Lag secret som 0.0.0.0 <i>freeswanGW-IP</i> "mysecretkeywords"
+Definer ID = IP (0.0.0.0) i PGPNet 
+
+<h3>Linux FreeSWan mobil PC</h3>
+Autentisering: rsasig ( Preshared secret virker ikke med variabel ( dhcp adresse) )<br>
+
+Definer ID = @something.pc  på begge endepunkter.<br> 
+Generer rsa nøkkelpar og utveksle offentlige nøkler.
+
+<h2>RSA autentisering</h2>
+
+Se http://www.strongsec.com/freeswan/ for hvordan du kan bruke x509
+sertifikater.<p>
+
+Autentisering av tunnellenes endepunkter og generering av krypteringsnøkkel
+er basert på at hver maskin har et privat/offentlig nøkkelpar. Kun den
+offentlige nøklen er tilgjengelig fra konfigurasjonsbildene. Nøkkelparet
+identifiseres ved maskinens ID.
+<h2>Generering av nøkler</h2>
+Trykk på knappen <b>Generer</b> for å genererer ny nøkkel. Nøkkelparet
+plasseres i ..../vpn.secrets, og du kan returnere den offentlige nøklen til
+tunnel konfigurasjonen. <b> Denne lokale offentlige nøklen må kopieres til
+alle "remote" gateways etter hver gang nytt nøkkelpar er generert.</b>
+Tilsvarende må du få deres offentlige ID og  nøkkel og legge den inn som Remote PUB
+Key.
+
+<h2>Brannmurregler</h2>
+For hver tunnel vil det bli generert nødvendige regler for å slippe
+selve tunneltrafikken gjennom brannmuren. <p>
+<b>Dette inkluderer IKKE data som skal innkapsles i tunnellen</b>. Det må
+defineres regler for å tillate aksess på vanlig måte. <p>
+<b>NB. Remote nett blir nå tilknyttet virtuelt vpn interface ipsec?, og ikke
+reelt interface.</b>

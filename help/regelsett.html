@@ -1,0 +1,48 @@
+<header>Cumulus Firewall - Editing Rules</header>
+
+This file describes the editing of rules in this module<P>
+
+An ACCEPT rule will generete filter rules to pass the packets in, forward
+and output it to the destinaten. The replies to TCP and UDP sessions are
+allowed to travel in the opposite direction. <br><b>
+Other protocols are unidirectional.</b><p>
+
+First, you surely want to know, what all those columns in the
+table are good for, so here you are:<BR><BR>
+
+<U>Nr.</U><BR>
+Rule number. Click on this to edit the rule. When you edit the rule you can
+save the rule at a different number. The old rule is left unchanged if number is
+changed.<br>
+This is how you copy and move rules.
+<P>
+<U>Source</U><BR>
+As you may guess, this column represents the source address, a
+packet comes from. 
+
+<BR><BR><U>Destination</U><BR>
+The destination of a packet. For example you want http to go
+through but to block ftp. All those warez servers...
+
+<BR><BR><U>Service</U><BR>
+This is the service to process.
+
+<BR><BR><U>F (Fragment)</U><BR>
+Matches the secont through the last fragment of a fragmented packet.
+Not used at the moment!
+
+<BR><BR><U>L (Logging)</U><BR>
+If set (X) session is logged.
+<p>
+All DENY and REJECT packets may be logged. Only  ACCEPTed TCP sessions will be
+logged.( Other protocols are not connection oriented, and may produse to
+much log data.)
+
+<BR><BR><U>TOS (Type Of Service)</U><BR>
+ipchains can change the TOS of a packet. To do this there are several
+possible values. This is shown in this column.
+
+
+<hr>
+
+Back to <A href="intro">Intro</a>

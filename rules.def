@@ -1,0 +1,4 @@
+Any,FW,ADMIN,,1,0x00,ACCEPT,,
+Any,FW,any,,1,0x00,DENY,,
+FW,INTERNET,any_tcp,,1,0x00,ACCEPT,,Internett aksess for proxy + cfengine ++
+LAN,Any,any,,1,0x00,ACCEPT,,Komment

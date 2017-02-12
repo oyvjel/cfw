@@ -1,0 +1,65 @@
+<header>Cumulus Firewall - Editing Objects</header>
+
+This file describes the editing of a single object<P>
+See <A href="group-edit">Groups</a> for editing groups of objects.
+<p>
+
+The object name must be unique. To copy an object you just enter the new
+name to copy to. The old object is uncganged.
+<p>
+You must specify a valid IP address for the object. 
+<p>
+The network mask may be specified as a dotted quad or as the number of bits.
+If the network mask is left blank the object is assumed to be a host.
+<p>
+Check the <b>Interface on FW</b> to define an address on a firewall
+interface. 
+<p>
+<h3>Interfaces with dynamic IP</h3>
+As the IP address is not known at the time of firewall configuration the
+interface address has to be set to 0.0.0.0. and a blank netmask. Make sure the location is
+correctly set. The Firewall will then discover the correct IP address on the
+interface when the ruleset is applied. For dial-up lines this is normaly
+done automatically each time a new connection is established.
+(See /etc/ppp/ip-up.local)
+<p>
+Note:	 If you specify address 0.0.0.0 and netmask 0.0.0.0, the address will not be converted, but kept as a specification of all possible addresses.
+	<p>
+
+
+<b>Example:</b>
+
+ADSL line to internet:
+<pre>
+interface(
+        ip=0.0.0.0
+	location=EXT,ppp0
+	type=interface
+	name=FW-ADSL
+)
+</pre>
+VPN on top of dialup ( adsl etc):
+<pre>
+interface(
+        ip=0.0.0.0
+	location=EXT,ipsec0
+	type=interface
+	name=FW-EXT-ipsec
+)
+		 
+</pre>
+
+
+ip-up.local
+<pre>
+#!bin/sh
+
+/etc/rc.d/init.d/fwstart.sh restart
+/etc/rc.d/init.d/cfw_vpn restart
+</pre>
+
+
+
+<hr>
+Back to <A href="intro">Intro</a>|<A href="objects">Objects</a>
+

@@ -1,0 +1,6 @@
+name=cfw
+desc=Cumulus Firewall
+desc_no=Cumulus Brannmur
+category=net
+os_support=redhat-linux debian-linux mandrake-linux slackware-linux suse-linux open-linux corel-linux turbo-linux lfs-linux cobaltl-linux
+depends=0.80

@@ -1,0 +1,6 @@
+http_access deny password squidaksess
+http_access deny password squidtest
+
+#http_access allow our_networks
+# And finally deny all other access to this proxy
+http_access deny all

@@ -1,0 +1,38 @@
+# 
+# Cumulus Firewall 
+# Copyright (C) 2000  Øyvind Jelstad, Cumulus IT AS
+# 
+# $Id: ipsec.conf.def,v 1.4 2000/12/14 01:17:02 oyvind Exp $
+
+
+
+# basic configuration
+config setup
+	# THIS SETTING MUST BE CORRECT or almost nothing will work;
+	# %defaultroute is okay for most simple cases.
+	#interfaces="ipsec0=eth0 ipsec1=eth0:0"
+	interfaces=%defaultroute
+	# Debug-logging controls:  "none" for (almost) none, "all" for lots.
+	klipsdebug=none
+	plutodebug=none
+	# Use auto= parameters in conn descriptions to control startup actions.
+	plutoload=%search
+	plutostart=%search
+
+
+
+# defaults for subsequent connection descriptions
+conn %default
+	# How persistent to be in (re)keying negotiations (0 means very).
+	keyingtries=0
+	# Parameters for manual-keying testing (DON'T USE OPERATIONALLY).
+	# Note:  only one test connection at a time can use these parameters!
+	spi=0x200
+	esp=3des-md5-96
+	espenckey=0x01234567_89abcdef_02468ace_13579bdf_12345678_9abcdef0
+	espauthkey=0x12345678_9abcdef0_2468ace0_13579bdf
+	# If RSA authentication is used, get keys from DNS.
+	leftrsasigkey=%dns
+	rightrsasigkey=%dns
+
+

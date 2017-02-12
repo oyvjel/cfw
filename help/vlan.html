@@ -1,0 +1,49 @@
+<header>Cumulus Firewall - VLAN oppsett</header>
+
+Slik setter du opp vlan:	
+<p>
+Vlan interfaces defineres ved boot. Eksempel på script som gjør dette er
+lagt med i fila vlan.boot. Denne fila kan kopieres til /etc/init.d/ og brukes som utgangspunkt.
+	
+	Det er smart å organisere vlan i grupper, f. eks
+	
+	<li>vlan100-vlan199
+	<li>vlan200-vlan299
+	<li>etc
+	<p>
+	
+	Definer interfacene i Module Config.
+	<p>
+	Eks. <p>
+	<li>LAN: vlan1+,vlan2+
+	<li>DMZ: vlan3
+	<p>
+			
+	Legg merke til jokertegnet +. vlan1+ matcher alle interfaces som begynner på vlan1.
+	Ved stort antall vlan er man avhengig av denne mekanismen og litt forutseenhet
+	i nettverksplanleggingen om nettet skal være praktisk mulig å administrere.
+	<p>
+	
+	<b>Hvordan blokkere all trafikk til FW</b><br>
+	Problemet oppstår når FW har et stort antall adresser. 
+	<p>
+	Brannmur kan nå defineres som et objekt (FW) type interface med adressen 0.0.0.0/0.0.0.0
+	og tilordnet location All. 
+	Dette vil sikre at alle pakker som rutes til brannmur med brannmur som destinsajon 
+	vil matche dette objektet uavhengig av adressen til brannmur..
+	<br>
+	For å avgrense en sperre til alle vlan kan man definere et nett VLAN med adresse som omfatter alle vlan, f.eks 0.0.0.0/0.0.0.0
+	og knytte dette til vlan+ interfacet( lokation).
+	
+	
+        Trafikk fra VLAN kan da blokkeres
+	med 
+	<p>VLAN -> FW :	 Deny
+	<p>
+	VLAN vil bli identifisert ved at trafikken kommer inn på interface vlan+. Pakker fra
+	 andre nett vil ikke matche denne reglen  fordi de kommer inn på andre
+	interface enn vlan+
+
+<hr>
+
+Back to <A href="intro">Intro</a>

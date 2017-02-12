@@ -1,0 +1,38 @@
+
+k3=<HR></td><td><hr><h3>--------Policy files ---------</h3>,-1
+policypath=Path to policy ( dir ),0
+rule=Ruleset name,0
+scriptfile=Path to firewall bootup script,0
+bootloc=Location of bootup and shutdown scripts,0
+logfile=Log file,0
+verbose=Verbose script execution,1,0-Nei,1-Ja
+
+k1=<HR></td><td><hr><h3>--------Default Policy---------</h3>,-1
+log_non_sessions=Log accepted non-session protocols ( udp...),1,0-Nei,1-Ja
+automasq=Automatic NAT logic.,1,0-Nei,1-Ja
+badaddr=Default blocking of "private" addresses,1,0-Nei,1-Ja
+block=BLOCKLIST rule,4,none-None,expl-Explicit,first-First,rule0-Before rule 0 
+icmp=Accept ICMP,4,none-None,first-First,last-Before last 
+rip=ACCEPT RIP routing,4,none-None,first-First,last-Before last 
+dns=ACCEPT DNS requests,4,none-None,first-First,last-Before last 
+
+auth=REJECT Ident ( auth),4,none-None,first-First,last-Before last 
+netbios=DROP NetBIOS,4,none-None,first-First,last-Before last 
+bootp=DROP BOOTP,4,none-None,first-First,last-Before last 
+bcast=Broadcast,4,none-None,first-DROP First,last-DROP Before last,a_first-ACCEPT First,a_last-ACCEPT Before last 
+
+k2=<HR></td><td><hr><h3>--------Interfaces ---------</h3>,-1
+EXT=External Interfaces (comma-separated list),3,eth0
+LAN=LAN Interfaces (comma-separated list),3,eth1
+DMZ=DMZ Interfaces (comma-separated list),3,None
+COM=COM Interfaces (comma-separated list),3,None
+
+k5=<HR></td><td><hr><h3>--------VPN  ---------</h3>,-1
+vpn_if=VPN Interfaces (ipsec0=eth0 ipsec1=ippp0 ... ),3,Default (defaultroute) 
+
+k4=<HR></td><td><hr><h3>--------OS files ---------</h3>,-1
+#netifaces=Network Interfaces (comma-separated list),-1,Use Network Configuration Module for detecting
+scriptinterpreter=Script interpreter,3,Default (/bin/sh)
+filter_path=Path to kernel filter program ,3,Default (/sbin/iptables)
+proto_file=Path to protocols file,3,Default (/etc/protocols)
+hostsfile=Path to your hosts file,3,Default (/etc/hosts)

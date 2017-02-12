@@ -1,0 +1,66 @@
+# Objektdefinisjoner 
+group(
+	name=any
+	member=any_tcp
+	member=any_udp
+	member=anyany
+)
+group(
+	name=ADMIN
+	member=ssh
+	member=webmin
+)
+service(
+	sport=0:65535
+	name=webmin
+	type=service
+	icmptype=0
+	proto=tcp
+	port=10000
+	tos=0x00
+)
+service(
+	sport=0:65535
+	name=webmin
+	type=service
+	icmptype=0
+	proto=tcp
+	port=10000
+	tos=0x00
+)
+service(
+	sport=0:65535
+	name=CFD
+	type=service
+	icmptype=0
+	proto=tcp
+	port=5308
+	tos=0x00
+)
+service(
+	sport=0:65535
+	name=any_tcp
+	type=service
+	icmptype=0
+	proto=tcp
+	port=0:65535
+	tos=0x00
+)
+service(
+	sport=0:65535
+	name=any_udp
+	type=service
+	icmptype=0
+	proto=udp
+	port=0:65535
+	tos=0x00
+)
+service(
+	sport=1024:65535
+	name=anyany
+	type=service
+	icmptype=0
+	proto=0
+	port=0:65535
+	tos=0x00
+)

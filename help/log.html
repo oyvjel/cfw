@@ -1,0 +1,23 @@
+<header>Logging</header>
+
+Cumulus firewall bruker syslog for å logge trafikk og hendelser
+
+Normalt logges til kern.info Vanligvis legges dette i fila
+/var/log/kern.log. Dette er standard loggfil som brannmuren benytter.
+
+<p>
+Administrative meldinger logges til user.info. For å samle all logging i 1
+fil, slik at administrative meldinger kommer inn i det web-baserte
+grensesnittet gjøres følgende:
+<p>
+
+Legg til i /etc/syslog.conf:
+<br>
+<pre>
+kern.=info;user.=info      /var/log/cfw.log 
+</pre>
+
+Definer /var/log/cfw.log i <i>Module Config</i>
+<p>
+
+

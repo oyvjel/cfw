@@ -1,0 +1,28 @@
+<header>VPN authentication</header>
+
+The VPN endpoints must authenticate to one another. 
+<p>
+The autentication can be based on a pre-shared secret or on public/private
+key pairs (RSA).
+<p>
+<font color=#ff0000> <B> 
+You can not mix RSA and PSK authentication on the same gateway unless all
+identifying local-remote IP address pairs are uniqe.
+</b></font>
+<h2>RSA public/private keys</h2>
+This is the prefered method. Generate a set of keys on each of the
+gatewayes. The public part of the  generated key can be inserted as the
+<b>Local PUB key</b> for easy access. The actual used keys are stored in the
+file <b>my.key</b> in the config area. <p>
+
+Copy the PUBLIC part of the key to all other VPN endpoints that
+should be able to connect. The copied keys should always be pasted into the
+<b>Remote PUB key</b> field.<p>
+For each tunnel you have to obtain the public key for the remote end and
+paste it into the Remote PUB key field.
+
+<h2>Pre-shared secrets</h2>
+You must enter a common secret on both endpoints. The secret is identified
+by the IP adresses of the communicating VPN gateways.<p>
+To allow DHCP or other dynamicly assigned addresses you can specify 0.0.0.0
+as the address on one side.
