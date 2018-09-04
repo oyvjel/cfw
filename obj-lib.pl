@@ -5,7 +5,7 @@
 # $Id: obj-lib.pl,v 1.5 2003/02/05 02:16:19 oyvind Exp $
 
 
-package main;
+# package main;
 
 
 
