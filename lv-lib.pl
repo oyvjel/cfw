@@ -7,7 +7,7 @@
 # $Id: lv-lib.pl,v 1.31 2003/03/18 22:25:29 oyvind Exp $
 
 
-package main;
+# package main;
 
 $CFW="cfw";
 
@@ -95,23 +95,40 @@ EOM
 print FILE "\necho Starting firewall.... \n" if $config{'verbose'};
 
 ######## INTERFACES ####################################
-print FILE "\necho Computing interface addresses... \n" if $config{'verbose'};
-
 print FILE "\n\n### Interface addresses ---------------------";
-open(IF, " ifconfig -a |")  or die "Kan ikke &aring;pne ifconfig \n";
+use Net::Interface;
+my %addresses = map { 
+          ($_ => [
+	                map { Net::Interface::inet_ntoa($_) } # make addresses readable
+	                    $_->address,                      # all addresses
+	            ]);
+    } Net::Interface->interfaces;                   # all interfaces
 
-
-while (<IF>) {
-   $L=$_;
-    if ( $L =~ m/^([a-z0-9]*) *Link.*/ ) {
-#       print "LINE = $L \n";
-#	&skriv;
-        print FILE "\nADR_$1=`/sbin/ifconfig $1 |sed -n -e \"s/ * inet addr:\\([\.0-9]*\\) .*/\\1/p\"`;";
-
-    }    
+for $if ( keys %addresses ) {
+    $komma='';
+    print FILE "\nADR_$if=";
+    for $i ( 0 .. $#{ $addresses{$if} } ) {
+	print FILE "$komma$addresses{$if}[$i]";
+	$komma=',';
+    }
 }
+
+# print FILE "\necho Computing interface addresses... \n" if $config{'verbose'};
+# open(IF, " ifconfig -a |")  or die "Kan ikke &aring;pne ifconfig \n";
+
+
+# while (<IF>) {
+#    $L=$_;
+##       print "LINE = $L \n";
+##	&skriv;
+#     if ( $L =~ m/^([a-z0-9]*) *Link.*/ ) {
+#         print FILE "\nADR_$1=`/sbin/ifconfig $1 |sed -n -e \"s/ * inet addr:\\([\.0-9]*\\) .*/\\1/p\"`;";
+
+#     }    
+# }
+# close IF;
+
 print FILE "\n\n\n";
-close IF;
 
 
 ##########################################################
@@ -741,7 +758,7 @@ sub script {
 
     $chain .= "\n# Rule nr $nr: FRA ". $S ." on |".$s_if_n . "| TIL " . $D ." on |".$d_if_n . "| PORT " . $P ."\n";
 
-    $d_is_FW = $s_is_FW = undef; 
+    $d_is_FW = $s_is_FW = $d_multicast = undef; 
     if ( $src->type eq "interface" ) {
         $s_is_FW = true;
 	$chain .= "# SOURCE IS FIREWALL!\n";
@@ -757,8 +774,44 @@ sub script {
 	      $dest->ip('$ADR_'.$d_if);
 	}
     }
+
+    $chain .="# S-IF: $s_if , D-IF: $d_if \n";    
+
+    ########### Multicast? 
+    use Net::Netmask;
     
-$chain .="# S-IF: $s_if , D-IF: $d_if \n";    
+    # our owners and their ranges
+    my @blocks = (
+	    [ 'A', '000.0.0.0/1' ],
+	    [ 'B', '128.0.0.0/2' ],
+	    [ 'C', '192.0.0.0/4' ],
+	    [ 'D', '224.0.0.0/4' ],
+	    [ 'E', '240.0.0.0/4' ],
+	    [ 'L', '127.0.0.0/255.0.0.0' ],
+    	    [ 'PA', '10.0.0.0/255.0.0.0' ],
+    	    [ 'PB', '172.16.0.0/255.240.0.0' ],
+    	    [ 'PC', '192.168.0.0/255.255.0.0' ],
+
+    );
+    
+# populate the table with tagged blocks
+    for my $block (@blocks) {
+	    my ($owner, $range) = @$block;
+	    my $nb = Net::Netmask->new2($range);
+	    $nb->tag('owner', $owner);
+	    $nb->storeNetblock();
+	};
+# do the lookup.
+    my $block = findNetblock($dest->ip);
+    if ($block) {
+	$d_multicast = true if $block->tag('owner') eq 'D';
+	print $dest->ip , " belongs to ", $block->tag('owner'), ". Multicast = $d_multicast \n";
+	$chain .="# Destination " . $dest->ip . " belongs to netclass " . $block->tag('owner') . ". Multicast = $d_multicast\n";    
+    }else{ 
+        print $dest->ip, " belongs to UNDEF, \n";
+    }
+
+    
     if ( ($action eq "ACCEPT") || ($action eq "MASQ" )) {
 #	if ( $log ) { $line .= " -l"; }
 
@@ -817,7 +870,7 @@ $chain .="# S-IF: $s_if , D-IF: $d_if \n";
 	  
       } else {  # S != FW
 	
-        if (  $d_is_FW ){  # Input chain.
+        if (  $d_is_FW || $d_multicast ){  # Input chain.
 	    $line = "$IPTABLES -A INPUT ";
 	    $line .=&chain_param($s_if,$src->ip,$src->netmask,$sport,undef,$dest->ip,$dest->netmask,$proto,$port,$icmptype); 
 
@@ -832,7 +885,9 @@ $chain .="# S-IF: $s_if , D-IF: $d_if \n";
 	    $chain .= "# Accept incomming in session\n";
 	    $chain .= $line ."\n";
 
-        }else{
+#        }else{
+	}
+	if ( ! $d_is_FW ){
 # Forward if D ! fw and S ! FW
 #	$chain .="#DEST. IF != FW, IF NAME=$d_if_n \n";
 	  $fline = "$IPTABLES -A FORWARD ";
